@@ -1,0 +1,22 @@
+[package]
+name = "telegram-files-sync"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+config = { version = "0.14.0", features = ["yaml"] }
+diesel = "2.1.4"
+fuse = "0.3.1"
+futures-util = { version = "0.3.15", default_features = false, features = [
+    "alloc"
+] }
+grammers-client = "0.5.0"
+grammers-session = "0.5.1"
+grammers-tl-types = "0.5.1"
+log = "0.4.20"
+rand = "0.8.5"
+serde = { version = "1.0.196", features = ["serde_derive"] }
+simple_logger = "4.3.3"
+tokio = { version = "1.36.0", features = ["fs", "rt", "signal"] }

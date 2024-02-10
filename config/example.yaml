@@ -1,0 +1,5 @@
+telegram:
+  api_id: TELEGRAM_API_ID
+  api_hash: "TELEGRAM_API_HASH"
+db:
+  connection_string: "SQLITE_CONNECTION_STRING"

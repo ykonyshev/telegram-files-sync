@@ -1,0 +1,4 @@
+/target
+/config/dev.yaml
+/sessions
+/files.db
