@@ -1,6 +1,8 @@
 /target
 /migration/target
 
+/test-fs
+
 /config/dev.*
 /sessions
 /files.db

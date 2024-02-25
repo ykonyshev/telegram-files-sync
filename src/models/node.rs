@@ -6,7 +6,7 @@ pub enum NodeKind {
     #[sea_orm(string_value = "directory")]
     Directory,
     #[sea_orm(string_value = "file")]
-    File
+    File,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
@@ -31,12 +31,16 @@ pub struct Model {
     pub uid: i32,
     pub gid: i32,
     pub rdev: i32,
-    pub flags: hello0,
+    pub flags: i32,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(belongs_to = "Entity", from = "Column::ParentInode", to = "Column::Inode")]
+    #[sea_orm(
+        belongs_to = "Entity",
+        from = "Column::ParentInode",
+        to = "Column::Inode"
+    )]
     SelfReferencing,
 }
 

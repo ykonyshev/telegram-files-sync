@@ -46,7 +46,7 @@ impl MigrationTrait for Migration {
         Ok(())
     }
 async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        let drop_node_table = "drop table node";
+        let drop_node_table = "drop table node;";
 
         manager
             .get_connection()

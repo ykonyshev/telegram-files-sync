@@ -5,5 +5,9 @@ pub async fn connect(connection_string: &String) -> DatabaseConnection {
 
     match connection_result {
         Ok(connection) => connection,
-        Err(err) => panic!("Could not connect to the db at \"{}\"\nError: {}", connection_string, err) }
+        Err(err) => panic!(
+            "Could not connect to the db at \"{}\"\nError: {}",
+            connection_string, err
+        ),
+    }
 }

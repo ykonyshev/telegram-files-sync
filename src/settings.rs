@@ -12,13 +12,13 @@ pub struct Telegram {
 
 #[derive(Debug, Deserialize)]
 pub struct DB {
-    pub connection_string: String
+    pub connection_string: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Settings {
     pub telegram: Telegram,
-    pub db: DB
+    pub db: DB,
 }
 
 impl Settings {

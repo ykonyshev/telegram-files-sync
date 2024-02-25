@@ -1,8 +1,8 @@
 use grammers_client::{Client, Config, InitParams, SignInError};
 use grammers_session::Session;
 use rand::{distributions::Alphanumeric, Rng};
-use std::path::{Path, PathBuf};
 use std::fs;
+use std::path::{Path, PathBuf};
 
 use crate::utils::prompt::prompt;
 
@@ -61,7 +61,10 @@ impl<'a> SessionsManager<'a> {
     pub fn new(sessions_folder: &'a Path) -> Self {
         if !sessions_folder.exists() {
             fs::create_dir(sessions_folder).unwrap_or_else(|_| {
-                panic!("Could not create the sessions folder at \"{:?}\"", sessions_folder);
+                panic!(
+                    "Could not create the sessions folder at \"{:?}\"",
+                    sessions_folder
+                );
             });
         }
 
