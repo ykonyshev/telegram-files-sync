@@ -1,4 +1,7 @@
 /target
-/config/dev.yaml
+/migration/target
+
+/config/dev.*
 /sessions
 /files.db
+/.idea

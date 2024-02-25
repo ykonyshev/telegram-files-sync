@@ -59,6 +59,12 @@ pub struct SessionsManager<'a> {
 
 impl<'a> SessionsManager<'a> {
     pub fn new(sessions_folder: &'a Path) -> Self {
+        if !sessions_folder.exists() {
+            fs::create_dir(sessions_folder).unwrap_or_else(|_| {
+                panic!("Could not create the sessions folder at \"{:?}\"", sessions_folder);
+            });
+        }
+
         Self {
             sessions_folder,
             present_sessions_files: fs::read_dir(sessions_folder).unwrap(),
