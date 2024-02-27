@@ -5,5 +5,7 @@
 
 /config/dev.*
 /sessions
-/files.db
 /.idea
+
+/**/*.db
+/**/*.sqlite

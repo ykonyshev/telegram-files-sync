@@ -6,7 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+chrono = "0.4.34"
 config = { version = "0.14.0", features = ["yaml"] }
+diesel = { version = "2.1.4", features = ["sqlite", "chrono"] }
+diesel-derive-enum = { version = "2.1.0", features = ["sqlite"] }
 fuse = "0.3.1"
 futures = "0.3.30"
 futures-util = "0.3.30"
@@ -16,7 +19,6 @@ grammers-tl-types = "0.5.1"
 libc = "0.2.153"
 log = "0.4.20"
 rand = "0.8.5"
-sea-orm = { version = "0.12.14", features = ["sqlx-sqlite", "runtime-tokio-native-tls", "macros", "with-chrono"] }
 serde = { version = "1.0.196", features = ["serde_derive"] }
 simple_logger = "4.3.3"
 time = "0.1"

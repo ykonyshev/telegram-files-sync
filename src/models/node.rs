@@ -1,21 +1,14 @@
+use chrono::NaiveDateTime;
 use fuse::{FileAttr, FileType};
-use sea_orm::entity::prelude::*;
+use diesel::{Queryable, Selectable};
 
+pub use crate::schema::NodeKind;
 use crate::utils::datetime_into_timespec::datetime_into_timespec;
 
-#[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Eq)]
-#[sea_orm(rs_type = "String", db_type = "String(None)")]
-pub enum NodeKind {
-    #[sea_orm(string_value = "directory")]
-    Directory,
-    #[sea_orm(string_value = "file")]
-    File,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
-#[sea_orm(table_name = "node")]
-pub struct Model {
-    #[sea_orm(primary_key)]
+#[derive(Queryable, Selectable)]
+#[diesel(table_name = crate::schema::node)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+pub struct Node {
     pub inode: i64,
     pub parent_inode: Option<i64>,
 
@@ -25,10 +18,10 @@ pub struct Model {
 
     pub size: i64,
     pub blocks: i64,
-    pub atime: DateTimeUtc,
-    pub mtime: DateTimeUtc,
-    pub ctime: DateTimeUtc,
-    pub crtime: DateTimeUtc,
+    pub atime: NaiveDateTime,
+    pub mtime: NaiveDateTime,
+    pub ctime: NaiveDateTime,
+    pub crtime: NaiveDateTime,
     pub perm: i16,
     pub nlink: i32,
     pub uid: i32,
@@ -37,33 +30,9 @@ pub struct Model {
     pub flags: i32,
 }
 
-#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {
-    #[sea_orm(
-        belongs_to = "Entity",
-        from = "Column::ParentInode",
-        to = "Column::Inode"
-    )]
-    SelfReferencing,
-}
-
-pub struct SelfReferencingLink;
-
-impl Linked for SelfReferencingLink {
-    type FromEntity = Entity;
-
-    type ToEntity = Entity;
-
-    fn link(&self) -> Vec<RelationDef> {
-        vec![Relation::SelfReferencing.def()]
-    }
-}
-
-impl ActiveModelBehavior for ActiveModel {}
-
-impl Into<FileAttr> for Model {
+impl Into<FileAttr> for Node {
     fn into(self) -> FileAttr {
-        FileAttr { 
+        FileAttr {
             ino: self.inode as u64,
             size: self.size as u64,
             blocks: self.blocks as u64,
@@ -80,10 +49,9 @@ impl Into<FileAttr> for Model {
             flags: self.flags as u32,
         }
     }
-
 }
 
-impl Model {
+impl Node {
     pub fn get_fuse_kind(&self) -> FileType {
         match self.kind {
             NodeKind::File => FileType::RegularFile,

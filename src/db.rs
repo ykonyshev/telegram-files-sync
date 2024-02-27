@@ -1,7 +1,7 @@
-use sea_orm::{Database, DatabaseConnection};
+use diesel::prelude::*;
 
-pub async fn connect(connection_string: &String) -> DatabaseConnection {
-    let connection_result = Database::connect(connection_string).await;
+pub async fn connect(connection_string: &String) -> SqliteConnection {
+    let connection_result = SqliteConnection::establish(connection_string);
 
     match connection_result {
         Ok(connection) => connection,

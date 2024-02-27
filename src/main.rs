@@ -1,5 +1,6 @@
 mod client_factory;
 mod db;
+mod schema;
 mod models;
 mod settings;
 mod synced_fs;
@@ -28,7 +29,7 @@ async fn async_main() -> Result<()> {
         .unwrap();
 
     let settings = Settings::new().unwrap();
-    let db_connection = db::connect(&settings.db.connection_string).await;
+    let mut db_connection = db::connect(&settings.db.connection_string).await;
 
     let mut client_factory = ClientFactory::new(
         Path::new(SESSIONS_FOLDER),
@@ -40,17 +41,18 @@ async fn async_main() -> Result<()> {
     let me = client.get_me().await?;
     println!("{}", me.username().unwrap());
 
-
     log::info!("Trying to mount the fuse fs at {}", FS_MOUNT_POINT);
     tokio::task::spawn_blocking(move || {
-        let fs = SyncedFs::new(&db_connection, &client);
+        let fs = SyncedFs::new(&mut db_connection, &client);
         let options = ["-o", "ro", "-o", "fsname=hello"]
             .iter()
             .map(|o| o.as_ref())
             .collect::<Vec<&OsStr>>();
 
         fuse::mount(fs, &Path::new(FS_MOUNT_POINT), &options).unwrap();
-    }).await.unwrap();
+    })
+    .await
+    .unwrap();
 
     Ok(())
 }
