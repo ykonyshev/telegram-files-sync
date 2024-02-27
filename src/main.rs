@@ -6,8 +6,6 @@ mod synced_fs;
 mod utils;
 
 use client_factory::{ClientFactory, Result};
-use models::node;
-use sea_orm::EntityTrait;
 use settings::Settings;
 use simple_logger::SimpleLogger;
 use std::ffi::OsStr;
@@ -21,6 +19,7 @@ const FS_MOUNT_POINT: &str = "./test-fs/";
 // TODO: Consider switching to diesel when this will be merged. I am not sure whether there is a
 // real benefit to using seaorm in this project, as it's asyncronous.
 // https://github.com/diesel-rs/diesel/pull/3940
+// NOTE: https://github.com/adwhit/diesel-derive-enum
 
 async fn async_main() -> Result<()> {
     SimpleLogger::new()
@@ -30,11 +29,6 @@ async fn async_main() -> Result<()> {
 
     let settings = Settings::new().unwrap();
     let db_connection = db::connect(&settings.db.connection_string).await;
-
-    let nodes: Vec<node::Model> = node::Entity::find().all(&db_connection).await?;
-    for node in nodes {
-        println!("{:?}", node);
-    }
 
     let mut client_factory = ClientFactory::new(
         Path::new(SESSIONS_FOLDER),
@@ -46,14 +40,17 @@ async fn async_main() -> Result<()> {
     let me = client.get_me().await?;
     println!("{}", me.username().unwrap());
 
-    let fs = SyncedFs::new(&db_connection);
-    let options = ["-o", "ro", "-o", "fsname=hello"]
-        .iter()
-        .map(|o| o.as_ref())
-        .collect::<Vec<&OsStr>>();
 
     log::info!("Trying to mount the fuse fs at {}", FS_MOUNT_POINT);
-    fuse::mount(fs, &Path::new(FS_MOUNT_POINT), &options).unwrap();
+    tokio::task::spawn_blocking(move || {
+        let fs = SyncedFs::new(&db_connection, &client);
+        let options = ["-o", "ro", "-o", "fsname=hello"]
+            .iter()
+            .map(|o| o.as_ref())
+            .collect::<Vec<&OsStr>>();
+
+        fuse::mount(fs, &Path::new(FS_MOUNT_POINT), &options).unwrap();
+    }).await.unwrap();
 
     Ok(())
 }

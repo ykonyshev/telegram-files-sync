@@ -2438,6 +2438,7 @@ dependencies = [
  "sea-orm",
  "serde",
  "simple_logger",
+ "time 0.1.45",
  "tokio",
 ]
 

@@ -19,4 +19,5 @@ rand = "0.8.5"
 sea-orm = { version = "0.12.14", features = ["sqlx-sqlite", "runtime-tokio-native-tls", "macros", "with-chrono"] }
 serde = { version = "1.0.196", features = ["serde_derive"] }
 simple_logger = "4.3.3"
-tokio = { version = "1.36.0", features = ["fs", "rt", "signal"] }
+time = "0.1"
+tokio = { version = "1.36.0", features = ["fs", "rt", "signal" ] }

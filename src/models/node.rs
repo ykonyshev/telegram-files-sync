@@ -1,4 +1,7 @@
+use fuse::{FileAttr, FileType};
 use sea_orm::entity::prelude::*;
+
+use crate::utils::datetime_into_timespec::datetime_into_timespec;
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Eq)]
 #[sea_orm(rs_type = "String", db_type = "String(None)")]
@@ -57,3 +60,34 @@ impl Linked for SelfReferencingLink {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+impl Into<FileAttr> for Model {
+    fn into(self) -> FileAttr {
+        FileAttr { 
+            ino: self.inode as u64,
+            size: self.size as u64,
+            blocks: self.blocks as u64,
+            atime: datetime_into_timespec(self.atime),
+            mtime: datetime_into_timespec(self.mtime),
+            ctime: datetime_into_timespec(self.ctime),
+            crtime: datetime_into_timespec(self.crtime),
+            kind: self.get_fuse_kind(),
+            perm: self.perm as u16,
+            nlink: self.nlink as u32,
+            uid: self.uid as u32,
+            gid: self.gid as u32,
+            rdev: self.rdev as u32,
+            flags: self.flags as u32,
+        }
+    }
+
+}
+
+impl Model {
+    pub fn get_fuse_kind(&self) -> FileType {
+        match self.kind {
+            NodeKind::File => FileType::RegularFile,
+            NodeKind::Directory => FileType::Directory,
+        }
+    }
+}
