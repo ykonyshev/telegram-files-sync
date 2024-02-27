@@ -1,7 +1,7 @@
 mod client_factory;
 mod db;
-mod schema;
 mod models;
+mod schema;
 mod settings;
 mod synced_fs;
 mod utils;

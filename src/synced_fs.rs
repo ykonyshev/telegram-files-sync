@@ -1,5 +1,5 @@
-use crate::schema::node::dsl;
 use crate::models::node::{self, Node, NodeKind};
+use crate::schema::node::dsl;
 use diesel::prelude::*;
 use diesel::result::Error::NotFound;
 use fuse::{FileType, Filesystem, ReplyAttr, ReplyData, ReplyDirectory, ReplyEntry, Request};
@@ -46,7 +46,7 @@ impl<'a> Filesystem for SyncedFs<'a> {
             Err(err) => {
                 log::error!("Could not lookup for child of: {parent}, with name: {name_as_str}, due to: {err}");
                 reply.error(ENOENT);
-            },
+            }
             Ok(child_node) => reply.entry(&TTL, &child_node.into(), 0),
         }
     }
@@ -64,7 +64,7 @@ impl<'a> Filesystem for SyncedFs<'a> {
             Err(err) => {
                 log::error!("Could not getattr inode: {ino}, due to: {err}");
                 reply.error(ENOENT);
-            },
+            }
             Ok(node) => reply.attr(&TTL, &node.into()),
         }
     }
@@ -103,7 +103,7 @@ impl<'a> Filesystem for SyncedFs<'a> {
             Err(err) => {
                 log::error!("Could not readdir inode: {ino}, due to: {err}");
                 reply.error(ENOENT);
-            },
+            }
             Ok(directory_node) => {
                 let directory_entries_with_err: QueryResult<Vec<Node>> = dsl::node
                     .select(Node::as_select())
@@ -125,12 +125,16 @@ impl<'a> Filesystem for SyncedFs<'a> {
                 match directory_entries_with_err {
                     Err(err) => {
                         log::error!("Could not retrieve entries for directory during readdir, inode: {ino}, due to: {err}");
-                    },
+                    }
                     Ok(directory_entries) => {
                         for entry in directory_entries {
-                            entries_reply_data.push((entry.inode, entry.get_fuse_kind(), entry.name));
+                            entries_reply_data.push((
+                                entry.inode,
+                                entry.get_fuse_kind(),
+                                entry.name,
+                            ));
                         }
-                    },
+                    }
                 };
 
                 for (index, reply_data) in entries_reply_data
@@ -148,7 +152,7 @@ impl<'a> Filesystem for SyncedFs<'a> {
                 }
 
                 reply.ok();
-            },
+            }
         };
     }
 }

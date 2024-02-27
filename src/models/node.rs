@@ -1,6 +1,6 @@
 use chrono::NaiveDateTime;
-use fuse::{FileAttr, FileType};
 use diesel::{Queryable, Selectable};
+use fuse::{FileAttr, FileType};
 
 pub use crate::schema::NodeKind;
 use crate::utils::datetime_into_timespec::datetime_into_timespec;

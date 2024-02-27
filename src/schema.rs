@@ -1,7 +1,7 @@
 #[derive(Debug, diesel_derive_enum::DbEnum)]
 pub enum NodeKind {
     Directory,
-    File
+    File,
 }
 
 diesel::table! {
