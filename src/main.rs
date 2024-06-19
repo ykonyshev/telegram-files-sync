@@ -40,7 +40,6 @@ async fn async_main() -> Result<()> {
     let me = client.get_me().await?;
     println!("{}", me.username().unwrap());
 
-
     log::info!("Trying to mount the fuse fs at {}", FS_MOUNT_POINT);
     tokio::task::spawn_blocking(move || {
         let fs = SyncedFs::new(&db_connection, &client);
@@ -50,7 +49,9 @@ async fn async_main() -> Result<()> {
             .collect::<Vec<&OsStr>>();
 
         fuse::mount(fs, &Path::new(FS_MOUNT_POINT), &options).unwrap();
-    }).await.unwrap();
+    })
+    .await
+    .unwrap();
 
     Ok(())
 }

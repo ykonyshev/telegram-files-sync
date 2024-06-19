@@ -63,7 +63,7 @@ impl ActiveModelBehavior for ActiveModel {}
 
 impl Into<FileAttr> for Model {
     fn into(self) -> FileAttr {
-        FileAttr { 
+        FileAttr {
             ino: self.inode as u64,
             size: self.size as u64,
             blocks: self.blocks as u64,
@@ -80,7 +80,6 @@ impl Into<FileAttr> for Model {
             flags: self.flags as u32,
         }
     }
-
 }
 
 impl Model {
